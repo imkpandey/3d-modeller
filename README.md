@@ -63,7 +63,7 @@ Welcome to the ultimate 3D Model Editor – a powerful web application designed 
 
 ```bash
 git clone https://github.com/imkpandey/3d-modeller.git
-cd 3d-model-editor
+cd 3d-modeller
 ```
 
 2. Install Dependencies
@@ -90,7 +90,7 @@ npm run dev
 
 ## 📧 Contact
 
-Your Name - [imkpandey31@gmail.com](mailto:imkpandey31@gmail.com)
+[imkpandey31@gmail.com](mailto:imkpandey31@gmail.com)
 
 ## 📄 License
 
