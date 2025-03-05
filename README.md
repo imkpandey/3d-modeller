@@ -1,36 +1,101 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# 🌟 3D Model Editor Web App 🚀
 
-## Getting Started
+[Live Demo](https://3d-modeller.vercel.app) 🔗
 
-First, run the development server:
+## 📝 Introduction
+
+Welcome to the ultimate 3D Model Editor – a powerful web application designed to revolutionize your 3D model editing experience! 🎨✨ This cutting-edge tool allows you to effortlessly view, edit, and render 3D models with an intuitive interface and robust features.
+
+## ✨ Key Features
+
+### 🖥️ Comprehensive Editing Capabilities
+
+- **File Support**: Import and edit GLTF and GLB files up to 50MB 📂
+- **Intuitive Layout**:
+  - Central Viewport for real-time 3D model rendering 🖼️
+  - Left Panel: Hierarchical Node Tree for detailed model structure 🌳
+  - Right Panel: Advanced Control Hub 🎛️
+
+### 🛠️ Powerful Editing Tools
+
+1. **Transform Controls** 🔄
+
+   - Move objects with precision
+   - Rotate models seamlessly
+   - Scale models effortlessly
+
+2. **Animation Panel** 🎬
+
+   - View and play model animations
+   - Preview different animation sequences
+
+3. **Material Editing** 🎨
+
+   - Customize material properties
+   - Change colors and material types
+
+4. **Environment Controls** 🌈
+   - Switch between environment presets
+   - Choose from various lighting setups:
+     - Studio
+     - Sunset
+     - Warehouse
+     - And more!
+
+## 🚀 Tech Stack
+
+- Next.js
+- React Three Fiber / Three.js
+- Context API (State Management)
+- Tailwind CSS
+- Lucide React Icons
+
+## 🛠️ Getting Started
+
+### Prerequisites
+
+- Node.js (v16+ recommended)
+- npm or Yarn
+
+### Installation Steps
+
+1. Clone the Repository
+
+```bash
+git clone https://github.com/imkpandey/3d-modeller.git
+cd 3d-model-editor
+```
+
+2. Install Dependencies
+
+```bash
+npm install
+```
+
+3. Run Development Server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+4. Open [http://localhost:3000](http://localhost:3000) in your browser 🌐
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+## 📋 TODO
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+- [ ] Fix multiple animations playback issue ▶️
+- [ ] Add HD environment presets 🌅
+- [ ] Implement advanced material editing 🎨
+- [ ] Add export functionality 📤
+- [ ] Create tutorial/onboarding flow 🎓
 
-## Learn More
+## 📧 Contact
 
-To learn more about Next.js, take a look at the following resources:
+Your Name - [imkpandey31@gmail.com](mailto:imkpandey31@gmail.com)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 📄 License
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+Distributed under the MIT License. See `LICENSE` for more information.
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+🌈 Happy 3D Modeling! 🚀
