@@ -13,8 +13,9 @@ Welcome to the ultimate 3D Model Editor – a powerful web application designed 
 - **File Support**: Import and edit GLTF and GLB files up to 50MB 📂
 - **Intuitive Layout**:
   - Central Viewport for real-time 3D model rendering 🖼️
-  - Left Panel: Hierarchical Node Tree for detailed model structure 🌳
-  - Right Panel: Advanced Control Hub 🎛️
+  - Left Panel: Hierarchical Node Tree with collapsible/expandable design 🌳
+  - Right Panel: Advanced Control Hub with toggle functionality 🎛️
+  - Panel Flexibility: Easily collapse or expand side panels for a customizable workspace 🔍
 
 ### 🛠️ Powerful Editing Tools
 
