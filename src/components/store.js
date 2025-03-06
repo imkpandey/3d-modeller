@@ -53,9 +53,13 @@ export const EditorProvider = ({ children }) => {
   const [activeAnimation, setActiveAnimation] = useState(null);
   const [activeEnvironment, setActiveEnvironment] = useState(null);
   const [showGrid, setShowGrid] = useState(true);
+  const [currentMaterialType, setCurrentMaterialType] = useState(
+    MATERIAL_TYPES.STANDARD
+  );
+
   const mixer = useRef(null);
   const objectInitialTransforms = useRef(new Map());
-  const originalMaterials = useRef(new Map());
+  const modifiedMaterials = useRef(new Map()); // Store modified materials by UUID
 
   // Function to extract all objects (groups and meshes) from a model
   const extractMeshes = useCallback(
@@ -73,7 +77,9 @@ export const EditorProvider = ({ children }) => {
 
         // Store original material for meshes
         if (object.isMesh && object.material) {
-          originalMaterials.current.set(object.uuid, object.material.clone());
+          // Clone the material to avoid shared references
+          const clonedMaterial = object.material.clone();
+          modifiedMaterials.current.set(object.uuid, clonedMaterial);
         }
       }
 
@@ -189,12 +195,34 @@ export const EditorProvider = ({ children }) => {
 
       // Update transform values with current object values (not initial)
       setPosition([object.position.x, object.position.y, object.position.z]);
-
       setRotation([object.rotation.x, object.rotation.y, object.rotation.z]);
-
       setScale([object.scale.x, object.scale.y, object.scale.z]);
 
+      // Apply any stored modified material
+      if (object.isMesh && modifiedMaterials.current.has(object.uuid)) {
+        // Only apply if it's not already the same material instance
+        if (object.material !== modifiedMaterials.current.get(object.uuid)) {
+          object.material = modifiedMaterials.current.get(object.uuid).clone();
+        }
+      }
+
       setSelectedObject(object);
+
+      // Update current material type if the object has a material
+      if (object.material) {
+        if (object.material.type === "MeshStandardMaterial")
+          setCurrentMaterialType(MATERIAL_TYPES.STANDARD);
+        else if (object.material.type === "MeshBasicMaterial")
+          setCurrentMaterialType(MATERIAL_TYPES.BASIC);
+        else if (object.material.type === "MeshPhongMaterial")
+          setCurrentMaterialType(MATERIAL_TYPES.PHONG);
+        else if (object.material.type === "MeshLambertMaterial")
+          setCurrentMaterialType(MATERIAL_TYPES.LAMBERT);
+        else if (object.material.type === "MeshPhysicalMaterial")
+          setCurrentMaterialType(MATERIAL_TYPES.PHYSICAL);
+        else if (object.material.type === "MeshToonMaterial")
+          setCurrentMaterialType(MATERIAL_TYPES.TOON);
+      }
 
       // Expand parents in hierarchy
       const objectPath = findObjectPath(modelMeshes, object);
@@ -202,7 +230,7 @@ export const EditorProvider = ({ children }) => {
         expandToObject(objectPath);
       }
     },
-    [modelMeshes, expandToObject, findObjectPath]
+    [modelMeshes, expandToObject, findObjectPath, MATERIAL_TYPES]
   );
 
   // Function to update transform values for the selected object
@@ -255,8 +283,8 @@ export const EditorProvider = ({ children }) => {
       // Update the material color
       selectedObject.material.color.set(color);
 
-      // Store the updated material
-      originalMaterials.current.set(
+      // Store the updated material in our map
+      modifiedMaterials.current.set(
         selectedObject.uuid,
         selectedObject.material.clone()
       );
@@ -278,8 +306,8 @@ export const EditorProvider = ({ children }) => {
       // Update the material property
       selectedObject.material[property] = value;
 
-      // Store the updated material
-      originalMaterials.current.set(
+      // Store the updated material in our map
+      modifiedMaterials.current.set(
         selectedObject.uuid,
         selectedObject.material.clone()
       );
@@ -357,10 +385,13 @@ export const EditorProvider = ({ children }) => {
       // Apply the new material
       selectedObject.material = newMaterial;
 
-      // Store the updated material
-      originalMaterials.current.set(selectedObject.uuid, newMaterial.clone());
+      // Store the updated material in our map
+      modifiedMaterials.current.set(selectedObject.uuid, newMaterial.clone());
+
+      // Update the current material type in state
+      setCurrentMaterialType(materialType);
     },
-    [selectedObject]
+    [selectedObject, MATERIAL_TYPES]
   );
 
   // Function to set environment
@@ -388,7 +419,7 @@ export const EditorProvider = ({ children }) => {
     setActiveAnimation(null);
 
     objectInitialTransforms.current.clear();
-    originalMaterials.current.clear();
+    modifiedMaterials.current.clear();
   }, []);
 
   const value = {
@@ -440,6 +471,9 @@ export const EditorProvider = ({ children }) => {
     showGrid,
     setShowGrid,
     MATERIAL_TYPES,
+    currentMaterialType,
+    setCurrentMaterialType,
+    modifiedMaterials,
   };
 
   return (

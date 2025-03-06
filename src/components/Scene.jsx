@@ -52,20 +52,21 @@ function ModelLoader() {
 
       // Set up animation mixer if there are animations
       if (animations && animations.length > 0) {
+        console.log("Creating new animation mixer");
+
         // Create a new mixer attached to the cloned scene
         const newMixer = new THREE.AnimationMixer(clonedScene);
         mixer.current = newMixer;
 
-        // Map animations to a more usable format with deep clones of the clips
+        // Map animations to a more usable format
         const processedAnimations = animations.map((clip) => {
-          // Create a deep clone of the animation clip
-          const clonedClip = THREE.AnimationClip.parse(
-            THREE.AnimationClip.toJSON(clip)
+          console.log(
+            `Processing animation: ${clip.name}, duration: ${clip.duration}`
           );
           return {
             name: clip.name,
             duration: clip.duration,
-            clip: clonedClip,
+            clip: clip,
           };
         });
 
@@ -117,7 +118,6 @@ function AnimationHandler() {
       console.log("Stopping previous animation");
       currentAction.fadeOut(0.5);
       currentAction.stop();
-      setCurrentAction(null);
     }
 
     // Start new animation if selected
@@ -139,16 +139,12 @@ function AnimationHandler() {
 
         // Store the current action for cleanup
         setCurrentAction(action);
-
-        return () => {
-          console.log("Cleaning up animation");
-          action.fadeOut(0.5);
-          action.stop();
-        };
       } catch (error) {
         console.error("Error playing animation:", error);
       }
     }
+
+    // No cleanup function here to avoid stopping animations prematurely
   }, [activeAnimation, mixer, model, currentAction]);
 
   return null;
@@ -163,39 +159,60 @@ function ModelWithTransform() {
     setPosition,
     setRotation,
     setScale,
+    modifiedMaterials,
   } = useEditor();
 
   const transformRef = useRef();
-  const originalMaterials = useRef(new Map());
+  const highlightMaterials = useRef(new Map());
 
   // Highlight selected object
   useEffect(() => {
     if (!model) return;
 
-    // Reset all materials first
-    originalMaterials.current.forEach((originalMaterial, object) => {
-      object.material = originalMaterial;
+    // Reset all highlight materials first
+    highlightMaterials.current.forEach((highlightMaterial, object) => {
+      // Get the current material (which might be modified)
+      const currentMaterial = object.material;
+
+      // Remove highlight effect but keep other modifications
+      if (currentMaterial && currentMaterial._isHighlighted) {
+        // Create a new material without highlight
+        const newMaterial = currentMaterial.clone();
+        newMaterial.emissive = new THREE.Color(0x000000);
+        newMaterial.emissiveIntensity = 0;
+        newMaterial._isHighlighted = false;
+
+        // Apply the new material
+        object.material = newMaterial;
+      }
     });
-    originalMaterials.current.clear();
+    highlightMaterials.current.clear();
 
     // Highlight the selected object
     if (selectedObject && selectedObject.isMesh) {
-      // Store original material
-      originalMaterials.current.set(selectedObject, selectedObject.material);
+      // Store reference to current material
+      highlightMaterials.current.set(selectedObject, selectedObject.material);
 
-      // Create highlight material based on original
+      // Create highlight material based on current material
       const highlightMaterial = selectedObject.material.clone();
       highlightMaterial.emissive = new THREE.Color(0x3333ff);
       highlightMaterial.emissiveIntensity = 0.3;
+      highlightMaterial._isHighlighted = true;
 
       // Apply highlight material
       selectedObject.material = highlightMaterial;
     }
 
     return () => {
-      // Cleanup on unmount
-      originalMaterials.current.forEach((originalMaterial, object) => {
-        object.material = originalMaterial;
+      // Cleanup on unmount - remove highlights but keep modifications
+      highlightMaterials.current.forEach((highlightMaterial, object) => {
+        if (object.material && object.material._isHighlighted) {
+          const newMaterial = object.material.clone();
+          newMaterial.emissive = new THREE.Color(0x000000);
+          newMaterial.emissiveIntensity = 0;
+          newMaterial._isHighlighted = false;
+          object.material = newMaterial;
+        }
       });
     };
   }, [selectedObject, model]);
@@ -262,7 +279,7 @@ function ModelWithTransform() {
   );
 }
 
-// Raycaster that selects model meshes
+// Improved raycaster that only selects model meshes
 function ViewportRaycaster() {
   const { camera, gl } = useThree();
   const { model, selectObject } = useEditor();
@@ -364,6 +381,7 @@ export default function Scene() {
         camera={{ position: [5, 6, 10], fov: 50 }}
         className="w-full h-full bg-[#191919]"
       >
+        {/* Lights */}
         <ambientLight intensity={0.5} />
         <spotLight
           position={[10, 10, 10]}
@@ -373,15 +391,19 @@ export default function Scene() {
           castShadow
         />
 
+        {/* Controls */}
         <CustomOrbitControls makeDefault />
 
+        {/* Environment */}
         <SceneEnvironment />
 
+        {/* Model */}
         {modelUrl && <ModelLoader />}
         <ModelWithTransform />
         <ViewportRaycaster />
         <AnimationHandler />
 
+        {/* Environment and helpers */}
         <GizmoHelper alignment="bottom-right" margin={[80, 80]}>
           <GizmoViewport
             axisColors={["#ff3653", "#8adb00", "#2c8fff"]}

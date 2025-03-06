@@ -11,6 +11,7 @@ export default function MaterialsPanel() {
     updateMaterialProperty,
     changeMaterialType,
     MATERIAL_TYPES,
+    currentMaterialType,
   } = useEditor();
 
   const [displayColorPicker, setDisplayColorPicker] = useState(false);
@@ -65,21 +66,6 @@ export default function MaterialsPanel() {
     setDisplayColorPicker(!displayColorPicker);
   };
 
-  const getCurrentMaterialType = () => {
-    if (!material) return MATERIAL_TYPES.STANDARD;
-
-    if (material.type === "MeshStandardMaterial")
-      return MATERIAL_TYPES.STANDARD;
-    if (material.type === "MeshBasicMaterial") return MATERIAL_TYPES.BASIC;
-    if (material.type === "MeshPhongMaterial") return MATERIAL_TYPES.PHONG;
-    if (material.type === "MeshLambertMaterial") return MATERIAL_TYPES.LAMBERT;
-    if (material.type === "MeshPhysicalMaterial")
-      return MATERIAL_TYPES.PHYSICAL;
-    if (material.type === "MeshToonMaterial") return MATERIAL_TYPES.TOON;
-
-    return MATERIAL_TYPES.STANDARD;
-  };
-
   return (
     <div className="h-full flex flex-col">
       <div className="p-4 border-b border-white/10">
@@ -91,7 +77,7 @@ export default function MaterialsPanel() {
         )}
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4">
+      <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
         {selectedObject?.material ? (
           <div>
             <div className="mb-6">
@@ -99,7 +85,7 @@ export default function MaterialsPanel() {
                 Material Type
               </h3>
               <select
-                value={getCurrentMaterialType()}
+                value={currentMaterialType}
                 onChange={handleMaterialTypeChange}
                 className="w-full text-black/80 px-3 py-2 rounded-md"
               >
@@ -188,6 +174,26 @@ export default function MaterialsPanel() {
           </div>
         )}
       </div>
+
+      <style jsx global>{`
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 8px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: rgba(31, 41, 55, 0.5);
+          border-radius: 4px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: rgba(255, 255, 255, 0.4);
+          border-radius: 4px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: rgba(255, 255, 255, 0.5);
+        }
+      `}</style>
     </div>
   );
 }
