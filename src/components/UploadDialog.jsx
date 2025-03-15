@@ -160,7 +160,6 @@ export default function UploadDialog() {
           </button>
         </div>
         <div className="flex justify-center items-center flex-col">
-          <Logo />
           <h2 className="text-xl font-bold text-white mt-4">3D Model Viewer</h2>
           <p className="text-md font-light text-white/70">
             View, edit and render your 3D models

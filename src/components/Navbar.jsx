@@ -7,8 +7,7 @@ export default function Navbar() {
   return (
     <div className="w-full bg-black/60 border-b border-white/10 text-white p-2 flex justify-between items-center z-[99]">
       <div className="flex items-center space-x-4">
-        <div className="flex items-center space-x-2">
-          <img src="/ctruh.png" alt="Logo" className="h-8 w-8" />
+        <div className="flex items-center">
           <h1 className="text-xl font-bold">3D Model Viewer</h1>
         </div>
         {modelName && (
